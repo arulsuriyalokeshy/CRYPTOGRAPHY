@@ -84,7 +84,8 @@ if __name__ == "__main__":
 
 
 ## OUTPUT:
-![image](https://github.com/user-attachments/assets/0e7ef0e8-cd08-4451-bbd2-bb8bca0cef10)
+![image](https://github.com/user-attachments/assets/c14ab2ff-75c1-4d98-bb13-779812834864)
+
 
 
 
