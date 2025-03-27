@@ -33,57 +33,59 @@ STEP-5: Combine all these groups to get the complete cipher text.<br>
 ## PROGRAM :
 ```
 import numpy as np
-import string
 
-def encode_triplet(a, b, c, keymat):
-    alphabet = string.ascii_uppercase
-    posa, posb, posc = alphabet.index(a), alphabet.index(b), alphabet.index(c)
-    
-    result = np.dot(keymat, [posa, posb, posc]) % 26
-    return "".join(alphabet[i] for i in result)
+def get_key_matrix():
+    key_matrix = np.zeros((2, 2), dtype=int)
+    print("Enter the 2x2 key matrix (values between 0-25):")
+    for i in range(2):
+        for j in range(2):
+            key_matrix[i][j] = int(input(f"Element [{i+1}][{j+1}]: "))
+    return key_matrix
 
-def decode_triplet(a, b, c, invkeymat):
-    alphabet = string.ascii_uppercase
-    posa, posb, posc = alphabet.index(a), alphabet.index(b), alphabet.index(c)
-    
-    result = np.dot(invkeymat, [posa, posb, posc]) % 26
-    result = [(i + 26) % 26 for i in result]  
-    return "".join(alphabet[i] for i in result)
+def to_upper_case(text):
+    return text.upper()
 
-def hill_cipher(message):
-    keymat = np.array([[1, 2, 1], [2, 3, 2], [2, 2, 1]])
-    invkeymat = np.array([[-1, 0, 1], [2, -1, 0], [-2, 2, -1]])
-    alphabet = string.ascii_uppercase
+def remove_spaces(text):
+    return text.replace(" ", "")
+
+def encrypt(text, key_matrix):
+    text = to_upper_case(remove_spaces(text))
     
-    message = message.upper().replace(" ", "")
-    n = len(message) % 3
-    if n != 0:
-        message += "X" * (3 - n)
+    if len(text) % 2 != 0:
+        text += 'X'  # Padding if needed
     
-    encoded_message = ""
-    for i in range(0, len(message), 3):
-        encoded_message += encode_triplet(message[i], message[i+1], message[i+2], keymat)
+    text_vector = [ord(char) - ord('A') for char in text]
+    cipher_text = ""
     
-    decoded_message = ""
-    for i in range(0, len(encoded_message), 3):
-        decoded_message += decode_triplet(encoded_message[i], encoded_message[i+1], encoded_message[i+2], invkeymat)
+    for i in range(0, len(text_vector), 2):
+        vector = np.array(text_vector[i:i+2]).reshape(2, 1)
+        encrypted_vector = np.dot(key_matrix, vector) % 26
+        cipher_text += ''.join(chr(num + ord('A')) for num in encrypted_vector.flatten())
     
-    return message, encoded_message, decoded_message
+    return cipher_text
+
+def main():
+    key_matrix = get_key_matrix()
+    
+    print("Key Matrix:")
+    print(key_matrix)
+    
+    text = input("Enter plaintext: ")
+    cipher_text = encrypt(text, key_matrix)
+    
+    print(f"Ciphertext: {cipher_text}")
 
 if __name__ == "__main__":
-    message = input("Enter the message to encrypt: ")
-    padded, encoded, decoded = hill_cipher(message)
-    print("Input message:", message)
-    print("Padded message:", padded)
-    print("Encoded message:", encoded)
-    print("Decoded message:", decoded)
+    main()
+
 
 
 ```
 
 
 ## OUTPUT:
-![image](https://github.com/user-attachments/assets/c83f7247-81f2-414a-807c-493af420f8a7)
+![image](https://github.com/user-attachments/assets/0e7ef0e8-cd08-4451-bbd2-bb8bca0cef10)
+
 
 
 ## RESULT
